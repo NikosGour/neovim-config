@@ -1,3 +1,5 @@
+vim.g.base46_cache = vim.fn.stdpath("data") .. "/base46_cache/"
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -20,8 +22,6 @@ vim.g.mapleader = " "
 
 require("options")
 
--- map ctrl + c to esc
-
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
@@ -35,13 +35,13 @@ require("lazy").setup({
     --        vim.cmd.colorscheme("monokai-pro")
     --      end,
     --    },
-    {
-      "folke/tokyonight.nvim",
-      config = function()
-        require("tokyonight").setup()
-        vim.cmd.colorscheme("tokyonight")
-      end,
-    },
+    -- {
+    --   "folke/tokyonight.nvim",
+    --   config = function()
+    --     require("tokyonight").setup()
+    --     vim.cmd.colorscheme("tokyonight")
+    --   end,
+    -- },
 
     -- Treesitter
     {
@@ -109,7 +109,7 @@ require("lazy").setup({
       dependencies = { "rbgrouleff/bclose.vim" }, -- required for Neovim
     },
 
-    -- vim surround
+    -- Vim Surround
     {
       "kylechui/nvim-surround",
       version = "^4.0.0",
@@ -124,14 +124,60 @@ require("lazy").setup({
         'nvim-lua/plenary.nvim',
         -- optional but recommended
         { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
-      }
+      },
+      config = function()
+        require("telescope").setup({
+
+          pickers = {
+            find_files = {
+              hidden = true
+            },
+            live_grep = {
+              additional_args = function()
+                return { "--hidden" }
+              end
+            }
+          },
+        })
+      end
     },
 
+    -- Comments
+    {
+      'numToStr/Comment.nvim',
+      opts = {
+        mappings = false
+      }
+    },
+    { "nvim-tree/nvim-web-devicons", lazy = true },
+    { "nvim-lua/plenary.nvim" },
+    {
+      "nvchad/ui",
+      config = function()
+        require("nvchad")
+      end
+    },
+    {
+      "nvchad/base46",
+      lazy = true,
+      build = function()
+        require("base46").load_all_highlights()
+      end
+    },
+    { "nvchad/volt" }
   },
-
-  install = { colorscheme = { "habamax" } },
+  install = { colorscheme = { "bearded-arc" } },
   checker = { enabled = true },
 })
+
+-- dofile(vim.g.base46_cache .. "defaults")
+-- dofile(vim.g.base46_cache .. "statusline")
+-- dofile(vim.g.base46_cache .. "syntax")
+-- dofile(vim.g.base46_cache .. "treesitter")
+
+for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
+  dofile(vim.g.base46_cache .. v)
+end
 
 require("nvim-treesitter").install({ "c", "lua", "vim", "vimdoc", "query", "html", "css", "vue", "typescript",
   "javascript" })
@@ -272,6 +318,11 @@ vim.keymap.set({ "n", "v" }, "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("n", "n", "nzzzv")
 
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+
 --- Delete - Registers
 vim.keymap.set({ "n", "v" }, "d", "\"_d")
 vim.keymap.set({ "n", "v" }, "c", "\"_c")
@@ -281,3 +332,29 @@ vim.keymap.set({ "n", "v" }, "<Leader>d", "d")
 
 -- General
 vim.keymap.set({ "i", "v" }, "<C-c>", "<Esc>")
+vim.keymap.set("n", "<A-v>", "<C-v>")
+vim.keymap.del("n", "<Leader>bd")
+
+vim.keymap.set("n", "<C-q>", vim.lsp.buf.hover)
+vim.keymap.set("n", "<Leader>c",
+  function()
+    vim.lsp.buf.code_action({ filter = function(action) return not action.disabled end })
+  end)
+
+-- Telescope
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+vim.keymap.set('n', '<leader>fe', builtin.diagnostics, { desc = 'Telescope buffers' })
+
+-- Comments
+local comment_api = require("Comment.api")
+vim.keymap.set("n", "<Leader>b", comment_api.toggle.linewise.current)
+vim.keymap.set("v", "<Leader>b", function()
+  local esc = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
+
+  vim.api.nvim_feedkeys(esc, "nx", false)
+  comment_api.toggle.linewise(vim.fn.visualmode())
+end)
