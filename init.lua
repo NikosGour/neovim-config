@@ -49,8 +49,41 @@ require("lazy").setup({
       lazy = false,
       build = ":TSUpdate",
       branch = "main",
+      event = { 'BufRead', 'BufNewFile' },
       config = function()
         require("nvim-treesitter").setup({})
+
+        require("nvim-treesitter").install({ "c", "lua", "vim", "vimdoc", "query", "html", "css", "vue", "typescript",
+          "javascript", "go", "c_sharp", "razor", "dockerfile" })
+
+
+        vim.api.nvim_create_autocmd('FileType', {
+          group = vim.api.nvim_create_augroup('treesitter.setup', {}),
+          callback = function(args)
+            local buf = args.buf
+            local filetype = args.match
+
+            -- you need some mechanism to avoid running on buffers that do not
+            -- correspond to a language (like oil.nvim buffers), this implementation
+            -- checks if a parser exists for the current language
+            local language = vim.treesitter.language.get_lang(filetype) or filetype
+            if not vim.treesitter.language.add(language) then
+              return
+            end
+
+            -- replicate `fold = { enable = true }`
+            -- vim.wo.foldmethod = 'expr'
+            -- vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
+            -- replicate `highlight = { enable = true }`
+            vim.treesitter.start(buf, language)
+
+            -- replicate `indent = { enable = true }`
+            -- vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+
+            -- `incremental_selection = { enable = true }` covered by 0.12.0
+          end,
+        })
       end,
     },
 
@@ -58,9 +91,22 @@ require("lazy").setup({
     {
       "williamboman/mason.nvim",
       lazy = false,
-      config = function()
-        require("mason").setup()
-      end,
+      opts = {
+        registries = {
+          "github:mason-org/mason-registry",
+          "github:Crashdummyy/mason-registry",
+        },
+        ensure_installed = {
+          "gopls",
+          "html-lsp",
+          "lua-language-server",
+          "tailwindcss-language-server",
+          "typescript-language-server",
+          "vtsls",
+          "vue-language-server",
+          "roslyn",
+        }
+      }
     },
 
     -- LSPConfig
@@ -78,7 +124,11 @@ require("lazy").setup({
       version = "1.*",
 
       opts = {
-        keymap = { preset = "super-tab" },
+        keymap = {
+          preset = "super-tab",
+          ['<C-f>'] = { 'scroll_documentation_up', 'fallback' },
+          ['<C-b>'] = { 'scroll_documentation_down', 'fallback' },
+        },
 
         completion = { documentation = { auto_show = true } },
 
@@ -130,7 +180,8 @@ require("lazy").setup({
 
           pickers = {
             find_files = {
-              hidden = true
+              hidden = true,
+              frllow = true
             },
             live_grep = {
               additional_args = function()
@@ -164,7 +215,60 @@ require("lazy").setup({
         require("base46").load_all_highlights()
       end
     },
-    { "nvchad/volt" }
+    { "nvchad/volt" },
+    {
+      "seblyng/roslyn.nvim",
+      ft = { "cs", "razor" },
+      opts = {}
+    },
+
+    {
+      -- Debug Framework
+      "mfussenegger/nvim-dap",
+      dependencies = {
+        "rcarriga/nvim-dap-ui",
+      },
+      config = function()
+        require "configs.nvim-dap"
+      end,
+      event = "VeryLazy",
+    },
+    { "nvim-neotest/nvim-nio" },
+    {
+      -- UI for debugging
+      "rcarriga/nvim-dap-ui",
+      dependencies = {
+        "mfussenegger/nvim-dap",
+      },
+      config = function()
+        require "configs.nvim-dap-ui"
+      end,
+    },
+    {
+      "nvim-neotest/neotest",
+      requires = {
+        {
+          "Issafalcon/neotest-dotnet",
+        }
+      },
+      dependencies = {
+        "nvim-neotest/nvim-nio",
+        "nvim-lua/plenary.nvim",
+        "antoinemadec/FixCursorHold.nvim",
+        "nvim-treesitter/nvim-treesitter"
+      }
+    },
+    {
+      "Issafalcon/neotest-dotnet",
+      lazy = false,
+      dependencies = {
+        "nvim-neotest/neotest"
+      }
+    },
+    {
+      "ramboe/ramboe-dotnet-utils",
+      dependencies = { "mfussenegger/nvim-dap" }
+    },
   },
   install = { colorscheme = { "bearded-arc" } },
   checker = { enabled = true },
@@ -179,8 +283,12 @@ for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
   dofile(vim.g.base46_cache .. v)
 end
 
-require("nvim-treesitter").install({ "c", "lua", "vim", "vimdoc", "query", "html", "css", "vue", "typescript",
-  "javascript" })
+require("neotest").setup({
+  adapters = {
+    require("neotest-dotnet")
+  }
+})
+
 
 vim.lsp.config("lua_ls", {
   settings = {
@@ -216,6 +324,9 @@ vim.lsp.enable("vue_ls")
 -- typescript lsp
 vim.lsp.enable("ts_ls")
 
+-- Docker lsp
+vim.lsp.enable("docker_language_server")
+
 -- typescript lsp
 local vue_language_server_path = vim.fn.stdpath("data") ..
     "/mason/packages/vue-language-server/node_modules/@vue/language-server"
@@ -242,8 +353,21 @@ vim.lsp.enable("vtsls")
 
 -- lua lsp
 vim.lsp.enable("lua_ls")
-vim.diagnostic.config({ virtual_text = true })
+vim.diagnostic.config({
+  virtual_text = true,
+  signs = true,
+})
 
+
+-- go lsp
+vim.lsp.config("gopls", {
+  capabilities = capabilities,
+})
+
+vim.lsp.enable("gopls")
+
+-- Csharp lsp
+-- vim.lsp.config("roslyn_ls", {})
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking text",
@@ -307,7 +431,9 @@ vim.g.clipboard = {
 }
 
 
--- Remaps
+vim.api.nvim_set_hl(0, "htmlEndTag", { link = "Function" })
+
+-- Remap
 --- Command
 vim.keymap.set("n", "<space><space>r", ":w<CR>:restart<CR>")
 vim.keymap.set("n", "<Leader>w", ":w<CR>")
@@ -358,3 +484,15 @@ vim.keymap.set("v", "<Leader>b", function()
   vim.api.nvim_feedkeys(esc, "nx", false)
   comment_api.toggle.linewise(vim.fn.visualmode())
 end)
+
+
+--run nohlsearch neovim automatically
+--error float
+--best neovim plugins
+--terminal
+--file explorer (yazi)
+--git / tig
+--neovim make crlf to lf
+--fix docker lsp to have docs and work on docker-compose
+--fix bug with dotnet test running
+--split config into dirs
