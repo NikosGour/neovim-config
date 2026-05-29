@@ -119,8 +119,7 @@ require("lazy").setup({
     {
       "saghen/blink.cmp",
 
-      dependancies = { "rafamandiz/friendly-snippets" },
-
+      dependencies = { 'rafamadriz/friendly-snippets' },
       version = "1.*",
 
       opts = {
@@ -177,7 +176,20 @@ require("lazy").setup({
       },
       config = function()
         require("telescope").setup({
+          defaults = {
+            layout_strategy = "vertical",
+            layout_config = {
+              vertical = {
+                prompt_position = "top",
+                mirror = true,
 
+                width = 0.9,
+                height = 0.95,
+
+                preview_height = 0.7,
+              }
+            }
+          },
           pickers = {
             find_files = {
               hidden = true,
@@ -187,6 +199,10 @@ require("lazy").setup({
               additional_args = function()
                 return { "--hidden" }
               end
+            },
+            buffers = {
+              sort_mru = true,
+              sort_lastused = true,
             }
           },
         })
@@ -268,6 +284,47 @@ require("lazy").setup({
     {
       "ramboe/ramboe-dotnet-utils",
       dependencies = { "mfussenegger/nvim-dap" }
+    },
+    {
+      "mikavilpas/yazi.nvim",
+      version = "*", -- use the latest stable version
+      event = "VeryLazy",
+      dependencies = {
+        { "nvim-lua/plenary.nvim", lazy = true },
+      },
+      keys = {
+        {
+          "<Leader>ns",
+          mode = { "n", "v" },
+          "<cmd>Yazi<cr>",
+          desc = "Open yazi at the current file",
+        },
+        {
+          "<Leader>nc",
+          mode = { "n", "v" },
+          "<cmd>Yazi cwd<cr>",
+          desc = "Open the file manager in nvim's working directory",
+        },
+        {
+          "<Leader>nf",
+          mode = { "n", "v" },
+          "<cmd>Yazi toggle<cr>",
+          desc = "Resume the last yazi session",
+        },
+      },
+      opts = {
+        -- if you want to open yazi instead of netrw, see below for more info
+        open_for_directories = true,
+        keymaps = {
+          show_help = "<f1>",
+        },
+      },
+      -- ?? if you use `open_for_directories=true`, this is recommended
+      init = function()
+        -- mark netrw as loaded so it's not loaded at all.
+        vim.g.loaded_netrwPlugin = 1
+      end,
+
     },
   },
   install = { colorscheme = { "bearded-arc" } },
@@ -488,6 +545,7 @@ end)
 
 --run nohlsearch neovim automatically
 --error float
+--colorizer
 --best neovim plugins
 --terminal
 --file explorer (yazi)
@@ -496,3 +554,8 @@ end)
 --fix docker lsp to have docs and work on docker-compose
 --fix bug with dotnet test running
 --split config into dirs
+--telescope vertical
+--
+-- snacks plugin
+-- notifier
+-- noice plugin
