@@ -172,11 +172,11 @@ require("lazy").setup({
       "mbbill/undotree"
     },
 
-    -- Tig
-    {
-      "iberianpig/tig-explorer.vim",
-      dependencies = { "rbgrouleff/bclose.vim" }, -- required for Neovim
-    },
+    -- -- Tig
+    -- {
+    --   "iberianpig/tig-explorer.vim",
+    --   dependencies = { "rbgrouleff/bclose.vim" }, -- required for Neovim
+    -- },
 
     -- Telescope
     {
@@ -657,7 +657,6 @@ vim.keymap.set({ "n", "v" }, "<Leader>d", "d")
 -- General
 vim.keymap.set({ "i", "v" }, "<C-c>", "<Esc>")
 vim.keymap.set("n", "<A-v>", "<C-v>")
-vim.keymap.del("n", "<Leader>bd")
 
 vim.keymap.set("n", "<C-q>", vim.lsp.buf.hover)
 vim.keymap.set("n", "<Leader>c",
