@@ -14,7 +14,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     os.exit(1)
   end
 end
-
 vim.opt.rtp:prepend(lazypath)
 
 vim.g.mapleader = " "
@@ -25,23 +24,51 @@ require("options")
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
-    -- Theme
-    --    {
-    --      "loctvl842/monokai-pro.nvim",
-    --      lazy = false,
-    --      priority = 1000,
-    --      config = function()
-    --        require("monokai-pro").setup()
-    --        vim.cmd.colorscheme("monokai-pro")
-    --      end,
-    --    },
-    -- {
-    --   "folke/tokyonight.nvim",
-    --   config = function()
-    --     require("tokyonight").setup()
-    --     vim.cmd.colorscheme("tokyonight")
-    --   end,
-    -- },
+    {
+      "folke/tokyonight.nvim",
+      config = function()
+        require("tokyonight").setup({
+          style = "night",
+          lualine_bold = true,   -- bold headers for each section header
+          day_brightness = 0.15, -- high contrast but colorful
+
+          -- jack up all saturation, default is too dull!
+          on_colors = function(colors)
+            local hsluv = require("tokyonight.hsluv")
+            local multiplier = 2.0
+
+            for k, v in pairs(colors) do
+              if type(v) == "string" and v ~= "NONE" then
+                local hsv = hsluv.hex_to_hsluv(v)
+                hsv[2] = hsv[2] * multiplier > 100 and 100 or hsv[2] * multiplier
+                colors[k] = hsluv.hsluv_to_hex(hsv)
+              elseif type(v) == "table" then
+                if vim.islist(v) then
+                  for kk, vv in ipairs(v) do
+                    if type(vv) == "string" and vv ~= "NONE" then
+                      local hsv = hsluv.hex_to_hsluv(vv)
+                      hsv[2] = hsv[2] * multiplier > 100 and 100 or hsv[2] * multiplier
+                      colors[k][kk] = hsluv.hsluv_to_hex(hsv)
+                    end
+                  end
+                else
+                  for kk, vv in pairs(v) do
+                    if type(vv) == "string" and vv ~= "NONE" then
+                      local hsv = hsluv.hex_to_hsluv(vv)
+                      hsv[2] = hsv[2] * multiplier > 100 and 100 or hsv[2] * multiplier
+                      colors[k][kk] = hsluv.hsluv_to_hex(hsv)
+                    end
+                  end
+                end
+              end
+            end
+          end,
+        })
+
+        vim.cmd.colorscheme("tokyonight")
+      end
+      ,
+    },
 
     -- Treesitter
     {
@@ -53,8 +80,8 @@ require("lazy").setup({
       config = function()
         require("nvim-treesitter").setup({})
 
-        require("nvim-treesitter").install({ "c", "lua", "vim", "vimdoc", "query", "html", "css", "vue", "typescript",
-          "javascript", "go", "c_sharp", "razor", "dockerfile" })
+        require("nvim-treesitter").install({ "c", "lua", "vim", "vimdoc", "query", "html", "css", "json", "vue",
+          "typescript", "javascript", "go", "c_sharp", "razor", "dockerfile" })
 
 
         vim.api.nvim_create_autocmd('FileType', {
@@ -104,7 +131,7 @@ require("lazy").setup({
           "typescript-language-server",
           "vtsls",
           "vue-language-server",
-          "roslyn",
+          "roslyn_ls",
         }
       }
     },
@@ -140,13 +167,6 @@ require("lazy").setup({
       },
     },
 
-    -- Autopairs
-    {
-      "windwp/nvim-autopairs",
-      event = "InsertEnter",
-      config = true
-    },
-
     -- Undotree
     {
       "mbbill/undotree"
@@ -158,19 +178,13 @@ require("lazy").setup({
       dependencies = { "rbgrouleff/bclose.vim" }, -- required for Neovim
     },
 
-    -- Vim Surround
-    {
-      "kylechui/nvim-surround",
-      version = "^4.0.0",
-      event = "VeryLazy",
-    },
-
     -- Telescope
     {
       'nvim-telescope/telescope.nvim',
       version = '*',
       dependencies = {
         'nvim-lua/plenary.nvim',
+        'nvim-telescope/telescope-ui-select.nvim',
         -- optional but recommended
         { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
       },
@@ -206,38 +220,13 @@ require("lazy").setup({
             }
           },
         })
+
+        require("telescope").load_extension("ui-select")
       end
     },
 
-    -- Comments
-    {
-      'numToStr/Comment.nvim',
-      opts = {
-        mappings = false
-      }
-    },
     { "nvim-tree/nvim-web-devicons", lazy = true },
     { "nvim-lua/plenary.nvim" },
-    {
-      "nvchad/ui",
-      config = function()
-        require("nvchad")
-      end
-    },
-    {
-      "nvchad/base46",
-      lazy = true,
-      build = function()
-        require("base46").load_all_highlights()
-      end
-    },
-    { "nvchad/volt" },
-    {
-      "seblyng/roslyn.nvim",
-      ft = { "cs", "razor" },
-      opts = {}
-    },
-
     {
       -- Debug Framework
       "mfussenegger/nvim-dap",
@@ -260,6 +249,7 @@ require("lazy").setup({
         require "configs.nvim-dap-ui"
       end,
     },
+    -- Neotest for testing
     {
       "nvim-neotest/neotest",
       requires = {
@@ -285,12 +275,15 @@ require("lazy").setup({
       "ramboe/ramboe-dotnet-utils",
       dependencies = { "mfussenegger/nvim-dap" }
     },
+    -- Yazi file navigation
     {
       "mikavilpas/yazi.nvim",
       version = "*", -- use the latest stable version
       event = "VeryLazy",
       dependencies = {
-        { "nvim-lua/plenary.nvim", lazy = true },
+        { "nvim-lua/plenary.nvim",      lazy = true },
+        { "nvim-tree/nvim-web-devicons" },
+
       },
       keys = {
         {
@@ -326,19 +319,122 @@ require("lazy").setup({
       end,
 
     },
+    {
+      'brenoprata10/nvim-highlight-colors',
+      opts = {
+
+        render = "virtual",
+        virtual_symbol = '⬛',
+
+        --Set virtual symbol suffix (defaults to '')
+        virtual_symbol_prefix = '',
+
+        ---Set virtual symbol suffix (defaults to ' ')
+        virtual_symbol_suffix = '',
+
+        virtual_symbol_position = 'inline',
+
+        ---Highlight hex colors, e.g. '#FFFFFF'
+        enable_hex = true,
+
+        ---Highlight short hex colors e.g. '#fff'
+        enable_short_hex = true,
+
+        ---Highlight rgb colors, e.g. 'rgb(0 0 0)'
+        enable_rgb = true,
+
+        ---Highlight hsl colors, e.g. 'hsl(150deg 30% 40%)'
+        enable_hsl = true,
+
+        ---Highlight ansi colors, e.g '\033[0;34m'
+        enable_ansi = true,
+
+        ---Highlight xterm 256 (8bit) colors, e.g '\033[38;5;118m'
+        enable_xterm256 = true,
+
+        ---Highlight xterm True Color (24bit) colors, e.g '\033[38;2;118;64;90m'
+        enable_xtermTrueColor = true,
+
+        -- Highlight hsl colors without function, e.g. '--foreground: 0 69% 69%;'
+        enable_hsl_without_function = true,
+
+        ---Highlight CSS variables, e.g. 'var(--testing-color)'
+        enable_var_usage = true,
+
+        ---Highlight named colors, e.g. 'green'
+        enable_named_colors = true,
+
+        ---Highlight tailwind colors, e.g. 'bg-blue-500'
+        enable_tailwind = true,
+      }
+    },
+    {
+      'nvim-mini/mini.nvim',
+      version = '*',
+      config = function()
+        require("mini.ai").setup({})
+        require("mini.comment").setup({ mappings = { comment_line = "<Leader>b", comment_visual = "<Leader>b" } })
+        require("mini.move").setup({})
+        require("mini.pairs").setup({})
+        -- require("mini.splitjoin").setup({}) look into it later
+        require("mini.surround").setup({})
+        -- require("mini.bracketed").setup({}) look into it later
+        require("mini.jump").setup({})
+      end
+    },
+
+    -- Lsp info popup
+    {
+      "j-hui/fidget.nvim",
+      opts = {}
+    },
+    {
+      "windwp/nvim-ts-autotag",
+      opts = {}
+    },
+    {
+      "folke/trouble.nvim",
+      opts = {}, -- for default options, refer to the configuration section for custom setup.
+      cmd = "Trouble",
+      keys = {
+        {
+          "<leader>xx",
+          "<cmd>Trouble diagnostics toggle<cr>",
+          desc = "Diagnostics (Trouble)",
+        },
+        {
+          "<leader>xX",
+          "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+          desc = "Buffer Diagnostics (Trouble)",
+        },
+        {
+          "<leader>cs",
+          "<cmd>Trouble symbols toggle focus=false<cr>",
+          desc = "Symbols (Trouble)",
+        },
+        {
+          "<leader>cl",
+          "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+          desc = "LSP Definitions / references / ... (Trouble)",
+        },
+        {
+          "<leader>xL",
+          "<cmd>Trouble loclist toggle<cr>",
+          desc = "Location List (Trouble)",
+        },
+        {
+          "<leader>xQ",
+          "<cmd>Trouble qflist toggle<cr>",
+          desc = "Quickfix List (Trouble)",
+        },
+      },
+    },
+    { "artemave/workspace-diagnostics.nvim" },
+    { "romainl/vim-cool" },
   },
-  install = { colorscheme = { "bearded-arc" } },
+  install = { colorscheme = { "tokyonight" } },
   checker = { enabled = true },
 })
-
--- dofile(vim.g.base46_cache .. "defaults")
--- dofile(vim.g.base46_cache .. "statusline")
--- dofile(vim.g.base46_cache .. "syntax")
--- dofile(vim.g.base46_cache .. "treesitter")
-
-for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
-  dofile(vim.g.base46_cache .. v)
-end
 
 require("neotest").setup({
   adapters = {
@@ -413,6 +509,7 @@ vim.lsp.enable("lua_ls")
 vim.diagnostic.config({
   virtual_text = true,
   signs = true,
+  severity_sort = true,
 })
 
 
@@ -424,7 +521,21 @@ vim.lsp.config("gopls", {
 vim.lsp.enable("gopls")
 
 -- Csharp lsp
--- vim.lsp.config("roslyn_ls", {})
+vim.lsp.config("roslyn_ls", {
+  capabilities = capabilities
+})
+vim.lsp.enable("roslyn_ls")
+
+vim.lsp.config('*', {
+  on_attach = function(client, bufnr)
+    -- some clients support workspace diagnostics natively
+    if client:supports_method("workspace/diagnostic", bufnr) then
+      vim.lsp.buf.workspace_diagnostics({ client_id = client.id })
+    else
+      require("workspace-diagnostics").populate_workspace_diagnostics(client, bufnr)
+    end
+  end
+})
 
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking text",
@@ -433,6 +544,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     vim.highlight.on_yank()
   end
 })
+
 
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
@@ -453,8 +565,35 @@ vim.api.nvim_create_autocmd("LspAttach", {
         end,
       })
     end
+    -- disable builtin color preview
+    vim.lsp.document_color.enable(false, nil, { style = "virtual" })
+
+    -- Workspace diagnostics
+    -- if client:supports_method("workspace/diagnostic", args.buf) then
+    --   vim.lsp.buf.workspace_diagnostics({ client_id = client.id })
+    -- else
+    --   require("workspace-diagnostics").populate_workspace_diagnostics(client, args.buf)
+    -- end
   end
 })
+
+
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function()
+    vim.diagnostic.open_float(nil, {
+      focusable = false,
+      close_events = {
+        "BufLeave",
+        "CursorMoved",
+        "InsertEnter"
+      },
+      border = "rounded",
+      source = "if_many",
+      scope = "cursor",
+    })
+  end,
+})
+
 
 --local clip = "/mnt/c/Windows/System32/clip.exe"
 --
@@ -489,6 +628,8 @@ vim.g.clipboard = {
 
 
 vim.api.nvim_set_hl(0, "htmlEndTag", { link = "Function" })
+vim.api.nvim_set_hl(0, "@keyword.function", { link = "@keyword" })
+vim.api.nvim_set_hl(0, "PreProc", { link = "@keyword" })
 
 -- Remap
 --- Command
@@ -530,32 +671,20 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find f
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
-vim.keymap.set('n', '<leader>fe', builtin.diagnostics, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>fe', function() builtin.diagnostics({ sort_by = "severity" }) end,
+  { desc = 'Telescope buffers' })
 
--- Comments
-local comment_api = require("Comment.api")
-vim.keymap.set("n", "<Leader>b", comment_api.toggle.linewise.current)
-vim.keymap.set("v", "<Leader>b", function()
-  local esc = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
-
-  vim.api.nvim_feedkeys(esc, "nx", false)
-  comment_api.toggle.linewise(vim.fn.visualmode())
-end)
-
-
---run nohlsearch neovim automatically
---error float
---colorizer
---best neovim plugins
 --terminal
---file explorer (yazi)
---git / tig
---neovim make crlf to lf
 --fix docker lsp to have docs and work on docker-compose
 --fix bug with dotnet test running
+--fix autocomplete choosing
 --split config into dirs
---telescope vertical
+--search and replace
+--refactor keybinds
+--html + css no errors/lsp
+--debugger show object on hover/keybind
 --
+-- Plugins
 -- snacks plugin
 -- notifier
 -- noice plugin
