@@ -22,26 +22,11 @@ dap.configurations.cs = {
       return require("dap-dll-autopicker").build_dll_path()
     end,
 
-    -- justMyCode = false,
-    -- stopAtEntry = false,
-    -- -- program = function()
-    -- --   -- todo: request input from ui
-    -- --   return "/path/to/your.dll"
-    -- -- end,
     env = {
       ASPNETCORE_ENVIRONMENT = function()
-        -- todo: request input from ui
         return "Development"
       end,
-      --   ASPNETCORE_URLS = function()
-      --     -- todo: request input from ui
-      --     return "http://localhost:5050"
-      --   end,
     },
-    -- cwd = function()
-    --   -- todo: request input from ui
-    --   return vim.fn.getcwd()
-    -- end,
   },
 }
 
@@ -55,7 +40,7 @@ map("n", "<F9>", "<Cmd>lua require'dap'.toggle_breakpoint()<CR>", opts)
 map("n", "<F10>", "<Cmd>lua require'dap'.step_over()<CR>", opts)
 map("n", "<F11>", "<Cmd>lua require'dap'.step_into()<CR>", opts)
 map("n", "<F8>", "<Cmd>lua require'dap'.step_out()<CR>", opts)
--- map("n", "<F12>", "<Cmd>lua require'dap'.step_out()<CR>", opts)
+
 map("n", "<leader>jr", "<Cmd>lua require'dap'.repl.open()<CR>", opts)
 map("n", "<leader>jl", "<Cmd>lua require'dap'.run_last()<CR>", opts)
 map("n", "<leader>jt", "<Cmd>lua require('neotest').run.run({strategy = 'dap'})<CR>",

@@ -1,5 +1,3 @@
-vim.g.base46_cache = vim.fn.stdpath("data") .. "/base46_cache/"
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -252,17 +250,20 @@ require("lazy").setup({
     -- Neotest for testing
     {
       "nvim-neotest/neotest",
-      requires = {
-        {
-          "Issafalcon/neotest-dotnet",
-        }
-      },
       dependencies = {
+        "Issafalcon/neotest-dotnet",
         "nvim-neotest/nvim-nio",
         "nvim-lua/plenary.nvim",
         "antoinemadec/FixCursorHold.nvim",
         "nvim-treesitter/nvim-treesitter"
-      }
+      },
+      config = function()
+        require("neotest").setup({
+          adapters = {
+            require("neotest-dotnet")
+          }
+        })
+      end
     },
     {
       "Issafalcon/neotest-dotnet",
@@ -436,11 +437,6 @@ require("lazy").setup({
   checker = { enabled = true },
 })
 
-require("neotest").setup({
-  adapters = {
-    require("neotest-dotnet")
-  }
-})
 
 
 vim.lsp.config("lua_ls", {
