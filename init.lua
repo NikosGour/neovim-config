@@ -16,6 +16,14 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.g.mapleader = " "
 -- vim.g.maplocalleader = "\\"
+--
+local function IsZoomedIn()
+  if vim.t['simple-zoom'] == nil then
+    return ''
+  elseif vim.t['simple-zoom'] == 'zoom' then
+    return '󰍉'
+  end
+end
 
 require("options")
 
@@ -460,6 +468,29 @@ require("lazy").setup({
         })
       end
     },
+    {
+      "fasterius/simple-zoom.nvim",
+      opts = { hide_tabline = true }
+    },
+    {
+      'nvim-lualine/lualine.nvim',
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
+        "folke/tokyonight.nvim",
+      },
+      config = function()
+        require("lualine").setup({
+          sections = {
+            lualine_a = { 'mode' },
+            lualine_b = { 'branch', 'diagnostics' },
+            lualine_c = { 'filename', IsZoomedIn, "searchcount" },
+            lualine_x = { { "diagnostics", sources = { "nvim_workspace_diagnostic" } }, 'filetype' },
+            lualine_y = { 'lsp_status' },
+            lualine_z = { 'progress' }
+          },
+        })
+      end
+    },
   },
   install = { colorscheme = { "tokyonight" } },
   checker = { enabled = true },
@@ -502,6 +533,9 @@ vim.lsp.enable("vue_ls")
 vim.lsp.enable("ts_ls")
 
 -- Docker lsp
+vim.lsp.config("docker_language_server", {
+  capabilities = capabilities,
+})
 vim.lsp.enable("docker_language_server")
 
 -- typescript lsp
@@ -658,7 +692,8 @@ vim.api.nvim_set_hl(0, "PreProc", { link = "@keyword" })
 -- Remap
 --- Command
 vim.keymap.set("n", "<space><space>r", ":w<CR>:restart<CR>")
-vim.keymap.set("n", "<Leader>w", ":w<CR>")
+vim.keymap.set("n", "<Leader>w", function() vim.cmd("w") end)
+vim.keymap.set("n", "<Leader>q", function() vim.cmd("bd") end)
 
 --- Navigation
 vim.keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz")
@@ -681,6 +716,7 @@ vim.keymap.set({ "n", "v" }, "<Leader>d", "d")
 -- General
 vim.keymap.set({ "i", "v" }, "<C-c>", "<Esc>")
 vim.keymap.set("n", "<A-v>", "<C-v>")
+vim.keymap.set('n', '<Leader>z', function() vim.cmd("SimpleZoomToggle") end)
 
 vim.keymap.set("n", "<C-q>", vim.lsp.buf.hover)
 vim.keymap.set("n", "<Leader>c",
@@ -696,6 +732,7 @@ vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' 
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 vim.keymap.set('n', '<leader>fe', function() builtin.diagnostics({ sort_by = "severity" }) end,
   { desc = 'Telescope buffers' })
+
 
 --fix docker lsp to have docs and work on docker-compose
 --fix autocomplete choosing

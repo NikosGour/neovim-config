@@ -20,3 +20,5 @@ vim.opt.termguicolors = true
 
 vim.opt.laststatus = 3
 vim.opt.updatetime = 250
+
+vim.opt.shortmess:append("S")
