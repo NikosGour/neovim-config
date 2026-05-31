@@ -251,7 +251,7 @@ require("lazy").setup({
     {
       "nvim-neotest/neotest",
       dependencies = {
-        "Issafalcon/neotest-dotnet",
+        "nsidorenco/neotest-vstest",
         "nvim-neotest/nvim-nio",
         "nvim-lua/plenary.nvim",
         "antoinemadec/FixCursorHold.nvim",
@@ -260,18 +260,12 @@ require("lazy").setup({
       config = function()
         require("neotest").setup({
           adapters = {
-            require("neotest-dotnet")
+            require("neotest-vstest")
           }
         })
       end
     },
-    {
-      "Issafalcon/neotest-dotnet",
-      lazy = false,
-      dependencies = {
-        "nvim-neotest/neotest"
-      }
-    },
+    { "nsidorenco/neotest-vstest" },
     {
       "ramboe/ramboe-dotnet-utils",
       dependencies = { "mfussenegger/nvim-dap" }
@@ -671,7 +665,6 @@ vim.keymap.set('n', '<leader>fe', function() builtin.diagnostics({ sort_by = "se
 
 --terminal
 --fix docker lsp to have docs and work on docker-compose
---fix bug with dotnet test running
 --fix autocomplete choosing
 --split config into dirs
 --search and replace
