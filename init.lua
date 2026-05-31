@@ -426,6 +426,40 @@ require("lazy").setup({
     },
     { "artemave/workspace-diagnostics.nvim" },
     { "romainl/vim-cool" },
+    {
+      "aserowy/tmux.nvim",
+      config = function()
+        require("tmux").setup({
+          copy_sync = { enable = false, },
+          navigation = {
+            cycle_navigation = true,
+
+            -- enables default keybindings (C-hjkl) for normal mode
+            enable_default_keybindings = true,
+
+            -- prevents unzoom tmux when navigating beyond vim border
+            persist_zoom = false,
+          },
+          resize = {
+            -- enables default keybindings (A-hjkl) for normal mode
+            enable_default_keybindings = true,
+
+            -- sets resize steps for x axis
+            resize_step_x = 1,
+
+            -- sets resize steps for y axis
+            resize_step_y = 1,
+          },
+          swap = {
+            -- cycles to opposite pane while navigating into the border
+            cycle_navigation = false,
+
+            -- enables default keybindings (C-A-hjkl) for normal mode
+            enable_default_keybindings = true,
+          }
+        })
+      end
+    },
   },
   install = { colorscheme = { "tokyonight" } },
   checker = { enabled = true },
@@ -632,10 +666,10 @@ vim.keymap.set({ "n", "v" }, "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("n", "n", "nzzzv")
 
-vim.keymap.set("n", "<C-h>", "<C-w>h")
-vim.keymap.set("n", "<C-j>", "<C-w>j")
-vim.keymap.set("n", "<C-k>", "<C-w>k")
-vim.keymap.set("n", "<C-l>", "<C-w>l")
+-- vim.keymap.set("n", "<C-h>", "<C-w>h")
+-- vim.keymap.set("n", "<C-j>", "<C-w>j")
+-- vim.keymap.set("n", "<C-k>", "<C-w>k")
+-- vim.keymap.set("n", "<C-l>", "<C-w>l")
 
 --- Delete - Registers
 vim.keymap.set({ "n", "v" }, "d", "\"_d")
@@ -663,7 +697,6 @@ vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help ta
 vim.keymap.set('n', '<leader>fe', function() builtin.diagnostics({ sort_by = "severity" }) end,
   { desc = 'Telescope buffers' })
 
---terminal
 --fix docker lsp to have docs and work on docker-compose
 --fix autocomplete choosing
 --split config into dirs
