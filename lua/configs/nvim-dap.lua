@@ -11,7 +11,7 @@ local netcoredbg_adapter = {
 ---@diagnostic disable-next-line: undefined-field
 dap.adapters.netcoredbg = netcoredbg_adapter -- needed for normal debugging
 ---@diagnostic disable-next-line: undefined-field
-dap.adapters.coreclr = netcoredbg_adapter    -- needed for unit test debugging
+dap.adapters.coreclr = netcoredbg_adapter -- needed for unit test debugging
 
 ---@diagnostic disable-next-line: undefined-field
 dap.configurations.cs = {
@@ -46,5 +46,9 @@ map("n", "<F8>", "<Cmd>lua require'dap'.step_out()<CR>", opts)
 
 map("n", "<leader>jr", "<Cmd>lua require'dap'.repl.open()<CR>", opts)
 map("n", "<leader>jl", "<Cmd>lua require'dap'.run_last()<CR>", opts)
-map("n", "<leader>jt", "<Cmd>lua require('neotest').run.run({strategy = 'dap'})<CR>",
-  { noremap = true, silent = true, desc = 'debug nearest test' })
+map(
+  "n",
+  "<leader>jt",
+  "<Cmd>lua require('neotest').run.run({strategy = 'dap'})<CR>",
+  { noremap = true, silent = true, desc = "debug nearest test" }
+)

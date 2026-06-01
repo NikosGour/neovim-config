@@ -20,10 +20,6 @@ require("lazy").setup({
   spec = { { import = "plugins" } },
   install = { colorscheme = { "tokyonight" } },
   checker = { enabled = true },
-  -- {
-  --   "ramboe/ramboe-dotnet-utils",
-  --   dependencies = { "mfussenegger/nvim-dap" }
-  -- },
 })
 
 require("filetypes")
@@ -32,7 +28,6 @@ require("autocmd")
 require("highlights")
 require("lsp")
 
---fix docker lsp to have docs
 --search and replace
 --debugger show object on hover/keybind
 --change color for functions
