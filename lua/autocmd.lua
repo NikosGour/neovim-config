@@ -4,21 +4,23 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
   callback = function()
     vim.highlight.on_yank()
-  end
+  end,
 })
 
 -- Multiple lsp autocmds
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if not client then return end
+    if not client then
+      return
+    end
 
-    -- Autocomplete
+    -- Autocomplete - Can't use while using blink.nvim since they conflict with each other.
     --if client:supports_method("textDocument/completion") then
     --  vim.lsp.completion.enable(true, client.id, args.buf)
     --end
 
-    -- Autoformatting
+    -- Autoformatting - Can't use while using conform.nvim since they conflict with each other.
     -- if client:supports_method("textDocument/formatting") then
     --   vim.api.nvim_create_autocmd("BufWritePre", {
     --     buffer = args.buf,
@@ -28,16 +30,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
     --     end,
     --   })
     -- end
-    -- disable builtin color preview
-    vim.lsp.document_color.enable(false, nil, { style = "virtual" })
 
-    -- Workspace diagnostics
-    -- if client:supports_method("workspace/diagnostic", args.buf) then
-    --   vim.lsp.buf.workspace_diagnostics({ client_id = client.id })
-    -- else
-    --   require("workspace-diagnostics").populate_workspace_diagnostics(client, args.buf)
-    -- end
-  end
+    -- disable builtin color preview since it conflicts with nvim-highlight-colors.lua
+    vim.lsp.document_color.enable(false, nil, { style = "virtual" })
+  end,
 })
 
 -- Show diagnostics on hover
@@ -49,7 +45,7 @@ vim.api.nvim_create_autocmd("CursorHold", {
       close_events = {
         "BufLeave",
         "CursorMoved",
-        "InsertEnter"
+        "InsertEnter",
       },
       border = "rounded",
       source = true,
@@ -57,9 +53,11 @@ vim.api.nvim_create_autocmd("CursorHold", {
     })
   end,
 })
+
+-- Lint on save
 vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
   group = vim.api.nvim_create_augroup("format on save nvim-lint", { clear = true }),
   callback = function()
     require("lint").try_lint()
-  end
+  end,
 })

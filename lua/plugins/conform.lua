@@ -11,6 +11,7 @@ return {
       vue = { "prettierd", "prettier", stop_after_first = true },
       lua = { "stylua" },
       go = { "gofmt" },
+      cs = { "csharpier" },
     },
   },
 }

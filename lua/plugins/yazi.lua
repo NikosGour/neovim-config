@@ -1,11 +1,10 @@
 return {
   "mikavilpas/yazi.nvim",
-  version = "*",     -- use the latest stable version
+  version = "*", -- use the latest stable version
   event = "VeryLazy",
   dependencies = {
-    { "nvim-lua/plenary.nvim",      lazy = true },
+    { "nvim-lua/plenary.nvim", lazy = true },
     { "nvim-tree/nvim-web-devicons" },
-
   },
   keys = {
     {
@@ -39,5 +38,4 @@ return {
     -- mark netrw as loaded so it's not loaded at all.
     vim.g.loaded_netrwPlugin = 1
   end,
-
 }
