@@ -14,11 +14,8 @@ vim.lsp.enable("vue_ls")
 vim.lsp.config("ts_ls", { capabilities = caps })
 vim.lsp.enable("ts_ls")
 
-vim.lsp.config("docker_language_server", {
-  capabilities = caps,
-  filetypes = { "dockerfile", "dockercompose" },
-})
-vim.lsp.enable("docker_language_server")
+vim.lsp.config("dockerls", { capabilities = caps })
+vim.lsp.enable("dockerls")
 
 vim.lsp.config("lua_ls", require("lsp.lua_ls"))
 vim.lsp.enable("lua_ls")
@@ -31,6 +28,12 @@ vim.lsp.enable("roslyn_ls")
 
 vim.lsp.config("vtsls", require("lsp.vtsls"))
 vim.lsp.enable("vtsls")
+
+vim.lsp.config("yamlls", require("lsp.yamlls"))
+vim.lsp.enable("yamlls")
+
+vim.lsp.config("cssls", { capabilities = caps })
+vim.lsp.enable("cssls")
 
 vim.diagnostic.config({
   virtual_text = false,

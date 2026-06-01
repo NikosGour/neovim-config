@@ -23,9 +23,9 @@ return {
       "c_sharp",
       "razor",
       "dockerfile",
+      "yaml",
+      "markdown",
     })
-
-    vim.treesitter.language.register("yaml", "dockercompose")
 
     vim.api.nvim_create_autocmd("FileType", {
       group = vim.api.nvim_create_augroup("treesitter.setup", {}),
@@ -49,7 +49,7 @@ return {
         vim.treesitter.start(buf, language)
 
         -- replicate `indent = { enable = true }`
-        -- vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 
         -- `incremental_selection = { enable = true }` covered by 0.12.0
       end,
