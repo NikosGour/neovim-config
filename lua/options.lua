@@ -1,3 +1,6 @@
+vim.g.mapleader = " "
+-- vim.g.maplocalleader = "\\"
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 
@@ -22,3 +25,18 @@ vim.opt.laststatus = 3
 vim.opt.updatetime = 250
 
 vim.opt.shortmess:append("S")
+
+vim.g.clipboard = {
+  name = "WslClipboard",
+  copy = {
+    ['+'] = "clip.exe",
+    ['*'] = "clip.exe",
+  },
+  paste = {
+    ['+'] =
+    'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+    ['*'] =
+    'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+  },
+  cache_enabled = 0,
+}

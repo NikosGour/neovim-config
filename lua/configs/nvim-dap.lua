@@ -8,9 +8,12 @@ local netcoredbg_adapter = {
   args = { "--interpreter=vscode" },
 }
 
+---@diagnostic disable-next-line: undefined-field
 dap.adapters.netcoredbg = netcoredbg_adapter -- needed for normal debugging
+---@diagnostic disable-next-line: undefined-field
 dap.adapters.coreclr = netcoredbg_adapter    -- needed for unit test debugging
 
+---@diagnostic disable-next-line: undefined-field
 dap.configurations.cs = {
   {
     type = "coreclr",
