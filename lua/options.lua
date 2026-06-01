@@ -7,7 +7,6 @@ vim.opt.relativenumber = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 
-
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 0
@@ -29,14 +28,14 @@ vim.opt.shortmess:append("S")
 vim.g.clipboard = {
   name = "WslClipboard",
   copy = {
-    ['+'] = "clip.exe",
-    ['*'] = "clip.exe",
+    ["+"] = "clip.exe",
+    ["*"] = "clip.exe",
   },
   paste = {
-    ['+'] =
-    'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
-    ['*'] =
-    'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+    ["+"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+    ["*"] = 'powershell.exe -NoLogo -NoProfile -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
   },
   cache_enabled = 0,
 }
+
+vim.g.copilot_no_tab_map = true

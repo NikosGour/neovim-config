@@ -3,16 +3,32 @@ return {
   lazy = false,
   build = ":TSUpdate",
   branch = "main",
-  event = { 'BufRead', 'BufNewFile' },
+  event = { "BufRead", "BufNewFile" },
   config = function()
     require("nvim-treesitter").setup({})
 
-    require("nvim-treesitter").install({ "c", "lua", "vim", "vimdoc", "query", "html", "css", "json", "vue",
-      "typescript", "javascript", "go", "c_sharp", "razor", "dockerfile" })
+    require("nvim-treesitter").install({
+      "c",
+      "lua",
+      "vim",
+      "vimdoc",
+      "query",
+      "html",
+      "css",
+      "json",
+      "vue",
+      "typescript",
+      "javascript",
+      "go",
+      "c_sharp",
+      "razor",
+      "dockerfile",
+    })
 
+    vim.treesitter.language.register("yaml", "dockercompose")
 
-    vim.api.nvim_create_autocmd('FileType', {
-      group = vim.api.nvim_create_augroup('treesitter.setup', {}),
+    vim.api.nvim_create_autocmd("FileType", {
+      group = vim.api.nvim_create_augroup("treesitter.setup", {}),
       callback = function(args)
         local buf = args.buf
         local filetype = args.match

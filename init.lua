@@ -5,7 +5,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out,                            "WarningMsg" },
+      { out, "WarningMsg" },
       { "\nPress any key to exit..." },
     }, true, {})
     vim.fn.getchar()
@@ -17,7 +17,7 @@ vim.opt.rtp:prepend(lazypath)
 require("options")
 
 require("lazy").setup({
-  spec = { { import = "plugins" }, },
+  spec = { { import = "plugins" } },
   install = { colorscheme = { "tokyonight" } },
   checker = { enabled = true },
   -- {
@@ -26,18 +26,14 @@ require("lazy").setup({
   -- },
 })
 
+require("filetypes")
 require("mappings")
 require("autocmd")
 require("highlights")
 require("lsp")
 
-
-
---fix docker lsp to have docs and work on docker-compose
---fix autocomplete choosing
+--fix docker lsp to have docs
 --search and replace
---refactor keybinds
---html + css no errors/lsp
 --debugger show object on hover/keybind
 --change color for functions
 --

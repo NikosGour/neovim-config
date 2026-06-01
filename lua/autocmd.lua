@@ -19,14 +19,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
     --end
 
     -- Autoformatting
-    if client:supports_method("textDocument/formatting") then
-      vim.api.nvim_create_autocmd("BufWritePre", {
-        buffer = args.buf,
-        callback = function()
-          vim.lsp.buf.format({ bufnr = args.buf, id = client.id })
-        end,
-      })
-    end
+    -- if client:supports_method("textDocument/formatting") then
+    --   vim.api.nvim_create_autocmd("BufWritePre", {
+    --     buffer = args.buf,
+    --     group = vim.api.nvim_create_augroup("format on save native", { clear = true }),
+    --     callback = function()
+    --       vim.lsp.buf.format({ bufnr = args.buf, id = client.id })
+    --     end,
+    --   })
+    -- end
     -- disable builtin color preview
     vim.lsp.document_color.enable(false, nil, { style = "virtual" })
 
@@ -41,17 +42,24 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 -- Show diagnostics on hover
 vim.api.nvim_create_autocmd("CursorHold", {
+  group = vim.api.nvim_create_augroup("show diagnostics on hover", { clear = true }),
   callback = function()
     vim.diagnostic.open_float(nil, {
-      focusable = false,
+      focusable = true,
       close_events = {
         "BufLeave",
         "CursorMoved",
         "InsertEnter"
       },
       border = "rounded",
-      source = "if_many",
+      source = true,
       scope = "cursor",
     })
   end,
+})
+vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
+  group = vim.api.nvim_create_augroup("format on save nvim-lint", { clear = true }),
+  callback = function()
+    require("lint").try_lint()
+  end
 })
