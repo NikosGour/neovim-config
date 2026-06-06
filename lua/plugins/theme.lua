@@ -3,8 +3,8 @@ return {
   config = function()
     require("tokyonight").setup({
       style = "night",
-      lualine_bold = true,       -- bold headers for each section header
-      day_brightness = 0.15,     -- high contrast but colorful
+      lualine_bold = true, -- bold headers for each section header
+      day_brightness = 0.15, -- high contrast but colorful
 
       -- jack up all saturation, default is too dull!
       on_colors = function(colors)
@@ -40,6 +40,13 @@ return {
     })
 
     vim.cmd.colorscheme("tokyonight")
-  end
-  ,
+
+    vim.api.nvim_set_hl(0, "NormalNC", {
+      fg = "#bdcaff",
+      bg = "#141628",
+    })
+    vim.api.nvim_set_hl(0, "WinSeparator", {
+      bg = "NONE",
+    })
+  end,
 }
