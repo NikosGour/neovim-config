@@ -1,17 +1,20 @@
+---@diagnostic disable: undefined-field
 local dapui = require("dapui")
 local dap = require("dap")
 
 --- open ui immediately when debugging starts
----@diagnostic disable-next-line: undefined-field
-dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open()
+dap.listeners.before.attach.dapui_config = function()
+  dapui.open({ layout = 2, reset = true })
+  dapui.open({ layout = 3, reset = true })
 end
----@diagnostic disable-next-line: undefined-field
-dap.listeners.before.event_terminated["dapui_config"] = function()
+dap.listeners.before.launch.dapui_config = function()
+  dapui.open({ layout = 2, reset = true })
+  dapui.open({ layout = 3, reset = true })
+end
+dap.listeners.before.event_terminated.dapui_config = function()
   dapui.close()
 end
----@diagnostic disable-next-line: undefined-field
-dap.listeners.before.event_exited["dapui_config"] = function()
+dap.listeners.before.event_exited.dapui_config = function()
   dapui.close()
 end
 
@@ -37,8 +40,18 @@ vim.fn.sign_define("DapBreakpointRejected", {
 })
 
 -- default configuration
+---@diagnostic disable-next-line: missing-fields
 dapui.setup({
   layouts = {
+    {
+      elements = {
+        { id = "breakpoints", size = 0.33 },
+        { id = "stacks", size = 0.33 },
+        { id = "watches", size = 0.33 },
+      },
+      size = 40, -- width of left panel
+      position = "left",
+    },
     {
       elements = {
         { id = "scopes", size = 1 },
@@ -92,3 +105,16 @@ dapui.setup({
   --   },
   -- },
 })
+local dapui_left_open = false
+
+function ToggleDapUILeft()
+  if dapui_left_open then
+    dapui.close({ layout = 1 })
+    dapui_left_open = false
+  else
+    dapui.open({ layout = 1, reset = true })
+    dapui_left_open = true
+  end
+end
+
+vim.api.nvim_create_user_command("DapUIToggleLeft", ToggleDapUILeft, {})
