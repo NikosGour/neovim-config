@@ -25,6 +25,8 @@ return {
       "dockerfile",
       "yaml",
       "markdown",
+      "bash",
+      "regex",
     })
 
     vim.api.nvim_create_autocmd("FileType", {

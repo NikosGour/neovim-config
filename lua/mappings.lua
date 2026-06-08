@@ -59,3 +59,14 @@ vim.keymap.set("i", "<S-Tab>", 'copilot#Accept("\\<CR>")', {
   replace_keycodes = false,
   desc = "Accept Copilot suggestion",
 })
+
+vim.keymap.set("n", "<leader>nd", function()
+  require("notify").dismiss()
+end, { desc = "Dismiss notifications" })
+
+vim.keymap.set(
+  "n",
+  "<Leader>nh",
+  require("telescope").extensions.notify.notify,
+  { desc = "Telescope notification history" }
+)
