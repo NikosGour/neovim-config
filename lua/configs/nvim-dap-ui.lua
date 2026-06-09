@@ -118,3 +118,8 @@ function ToggleDapUILeft()
 end
 
 vim.api.nvim_create_user_command("DapUIToggleLeft", ToggleDapUILeft, {})
+
+vim.keymap.set("n", "<Leader>?", function()
+  ---@diagnostic disable-next-line: missing-fields
+  require("dapui").eval(nil, { enter = true })
+end)
