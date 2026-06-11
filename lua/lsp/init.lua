@@ -11,8 +11,8 @@ vim.lsp.enable("tailwindcss")
 vim.lsp.config("vue_ls", { capabilities = caps })
 vim.lsp.enable("vue_ls")
 
-vim.lsp.config("ts_ls", { capabilities = caps })
-vim.lsp.enable("ts_ls")
+-- vim.lsp.config("ts_ls", { capabilities = caps })
+-- vim.lsp.enable("ts_ls")
 
 vim.lsp.config("dockerls", { capabilities = caps })
 vim.lsp.enable("dockerls")
