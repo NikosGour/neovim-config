@@ -70,3 +70,17 @@ vim.keymap.set(
   require("telescope").extensions.notify.notify,
   { desc = "Telescope notification history" }
 )
+
+vim.keymap.set("n", "<Leader>ne", function()
+  vim.diagnostic.jump({
+    count = 1,
+    severity = vim.diagnostic.severity.ERROR,
+  })
+end)
+
+vim.keymap.set("n", "<Leader>pe", function()
+  vim.diagnostic.jump({
+    count = -1,
+    severity = vim.diagnostic.severity.ERROR,
+  })
+end)
