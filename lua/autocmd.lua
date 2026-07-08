@@ -61,3 +61,13 @@ vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
     require("lint").try_lint()
   end,
 })
+
+local function set_keyboard(layout)
+  vim.fn.jobstart({ "im-select.exe", layout })
+end
+
+vim.api.nvim_create_autocmd("InsertLeave", {
+  callback = function()
+    set_keyboard("1033") -- English US
+  end,
+})
