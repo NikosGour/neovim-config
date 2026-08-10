@@ -25,6 +25,7 @@ return {
         "prettier",
         "prettierd",
         "stylua",
+        "csharpier",
       },
       auto_update = false,
       run_on_start = true,
