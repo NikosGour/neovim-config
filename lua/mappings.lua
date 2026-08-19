@@ -12,6 +12,9 @@ vim.keymap.set("n", "<Leader>z", function()
   vim.cmd("SimpleZoomToggle")
 end, { desc = "Zoom window" })
 
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { silent = true })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { silent = true })
+
 -- Navigation
 vim.keymap.set({ "n", "v" }, "<C-d>", "<C-d>zz", { desc = "Center screen after page down" })
 vim.keymap.set({ "n", "v" }, "<C-u>", "<C-u>zz", { desc = "Center screen after page up" })

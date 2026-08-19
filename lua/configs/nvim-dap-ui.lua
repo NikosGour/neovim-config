@@ -56,14 +56,14 @@ dapui.setup({
       elements = {
         { id = "scopes", size = 1 },
       },
-      size = 20,
+      size = 15,
       position = "bottom",
     },
     {
       elements = {
         { id = "repl", size = 1 },
       },
-      size = 1,
+      size = 15,
       position = "bottom",
     },
   },

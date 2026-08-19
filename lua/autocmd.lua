@@ -71,3 +71,7 @@ vim.api.nvim_create_autocmd("InsertLeave", {
     set_keyboard("1033") -- English US
   end,
 })
+
+vim.api.nvim_create_user_command("SaveWithoutFormatting", function()
+  vim.cmd("noautocmd write")
+end, {})
