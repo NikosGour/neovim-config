@@ -42,6 +42,18 @@ vim.keymap.set("n", "<Leader>fe", function()
   builtin.diagnostics({ sort_by = "severity" })
 end, { desc = "Telescope buffers" })
 
+local actions = require("telescope.actions")
+require("telescope").setup({
+  defaults = {
+    mappings = {
+      i = {
+        ["<C-j>"] = actions.cycle_history_next,
+        ["<C-k>"] = actions.cycle_history_prev,
+      },
+    },
+  },
+})
+
 -- LSP
 vim.keymap.set("n", "<C-q>", vim.lsp.buf.hover, { desc = "Lsp documentation" })
 vim.keymap.set("n", "<Leader>lc", function()

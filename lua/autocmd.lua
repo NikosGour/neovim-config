@@ -75,3 +75,10 @@ vim.api.nvim_create_autocmd("InsertLeave", {
 vim.api.nvim_create_user_command("SaveWithoutFormatting", function()
   vim.cmd("noautocmd write")
 end, {})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "cs",
+  callback = function()
+    vim.bo.indentexpr = ""
+  end,
+})

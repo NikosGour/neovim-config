@@ -2,7 +2,8 @@ return {
   "saghen/blink.cmp",
 
   dependencies = {
-    -- "rafamadriz/friendly-snippets",
+    -- if something freezes its usually friendly-snippets, so we disable it
+    "rafamadriz/friendly-snippets",
     "L3MON4D3/LuaSnip",
   },
   version = "1.*",
