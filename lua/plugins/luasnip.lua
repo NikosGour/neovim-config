@@ -1,4 +1,8 @@
 return {
-  -- "L3MON4D3/LuaSnip",
-  -- dependencies = { "rafamadriz/friendly-snippets" },
+  "L3MON4D3/LuaSnip",
+  opts = function(_, opts)
+    require("luasnip.loaders.from_lua").lazy_load({
+      paths = { vim.fn.stdpath("config") .. "/snippets" },
+    })
+  end,
 }

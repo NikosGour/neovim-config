@@ -1,3 +1,5 @@
+local console_log = require("utils.debug_printing").console_log
+
 -- General
 vim.keymap.set("n", "<space><space>r", ":w<CR>:restart<CR>", { desc = "Restart nvim" })
 vim.keymap.set("n", "<Leader>w", function()
@@ -68,6 +70,9 @@ vim.keymap.set("n", "<Leader>ld", vim.lsp.buf.definition, { desc = "Go to defini
 vim.keymap.set("n", "<Leader>lt", vim.lsp.buf.type_definition, { desc = "Go to type definition" })
 vim.keymap.set("n", "<Leader>li", builtin.lsp_references, { desc = "Telescope references" })
 vim.keymap.set("n", "<Leader>lii", builtin.lsp_implementations, { desc = "Telescope implementations" })
+vim.keymap.set({ "n", "v" }, "<leader>ll", console_log, {
+  desc = "Console log",
+})
 
 vim.keymap.set("i", "<S-Tab>", 'copilot#Accept("\\<CR>")', {
   expr = true,
