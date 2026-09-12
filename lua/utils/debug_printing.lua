@@ -14,7 +14,7 @@ local loggers = {
   end,
 
   go = function(expr)
-    return 'log.Printf("' .. expr .. ': %v", ' .. expr .. ")"
+    return 'log.Debug("' .. expr .. ': %v", ' .. expr .. ")"
   end,
 
   python = function(expr)
