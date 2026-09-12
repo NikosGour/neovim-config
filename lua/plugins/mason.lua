@@ -10,6 +10,7 @@ return {
     require("mason-tool-installer").setup({
       ensure_installed = {
         "gopls",
+        "goimports",
         "html-lsp",
         "lua-language-server",
         "tailwindcss-language-server",
