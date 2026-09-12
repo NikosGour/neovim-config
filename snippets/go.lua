@@ -5,6 +5,12 @@ local i = ls.insert_node
 
 return {
   s("iferr", {
+    t({ "if err != nil {", '\treturn fmt.Errorf("' }),
+    i(1, "on message"),
+    t({ ': %w", err)', "}" }),
+  }),
+
+  s("iferrr", {
     t({ "if err != nil {", "\treturn " }),
     i(1, "nil"),
     t({ ", err", "}" }),
