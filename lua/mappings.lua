@@ -98,6 +98,12 @@ vim.keymap.set("n", "<Leader>ne", function()
   })
 end)
 
+vim.keymap.set("n", "<Leader>na", function()
+  vim.diagnostic.jump({
+    count = 1,
+  })
+end)
+
 vim.keymap.set("n", "<Leader>pe", function()
   vim.diagnostic.jump({
     count = -1,
